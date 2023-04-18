@@ -1,7 +1,28 @@
-.board {
-    font-family: "Fira Mono", sans-serif;
+$cellSize: 20px;
 
-    &__cell {
+.board {
+    display: flex;
+
+    .cell {
         display: inline;
+        width: $cellSize;
+        height: $cellSize;
+        margin: 2px;
+        text-align: center;
+        &:hover{
+            cursor: pointer;
+        }
+
+        &--hit {
+            background-color: orangered;
+        }
+
+        &--miss {
+            background-color: aqua;
+        }
+
+        &--unknown {
+            background-color: lightgray;
+        }
     }
 }

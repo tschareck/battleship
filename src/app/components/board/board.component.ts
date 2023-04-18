@@ -5,15 +5,22 @@ import { FieldEnum } from 'src/app/services/field.enum';
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
-  styleUrls: ['./board.component.scss']
+  styleUrls: ['./board.component.scss'],
 })
-export class BoardComponent implements OnInit{
+export class BoardComponent implements OnInit {
   BoardData: FieldEnum[][] | undefined;
 
-  constructor(private service: BattleService){}
+  constructor(private service: BattleService) {}
 
   ngOnInit(): void {
     this.service.NewGame();
-    this.BoardData = this.service.boardData;
+
+    this.service.boardSubject.subscribe((value) => {
+      this.BoardData = value;
+    });
+  }
+
+  CellClicked(row: number, cell: number) {
+    this.service.ShotFired(row, cell);
   }
 }

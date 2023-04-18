@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { BattleService } from './services/battle.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'battleship';
+
+  constructor(private battleService: BattleService) {}
+
+  callNewGame() {
+    this.battleService.NewGame();
+  }
 }

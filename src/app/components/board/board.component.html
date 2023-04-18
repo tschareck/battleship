@@ -1,6 +1,11 @@
-<div class="board" *ngFor="let row of BoardData">
-    <p *ngFor="let cell of row"
-        class="board__cell">
-        {{ cell }}
+<div class="board" *ngFor="let row of BoardData; let rowIndex = index">
+    <p *ngFor="let cell of row; let cellIndex = index"
+        (click)="CellClicked(rowIndex, cellIndex)"
+        class="cell"
+        [ngClass]="{
+            'cell--hit': cell === 'X', 
+            'cell--miss': cell === '*', 
+            'cell--unknown': cell === 'S' || cell === '-'
+        }">
     </p>
 </div>

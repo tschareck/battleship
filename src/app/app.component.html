@@ -1,3 +1,14 @@
-<div id="battle-board">
-  <app-board />
+<div class="flexbox-container">
+  <div class="panel">
+    <button (click)="callNewGame()">New game</button>
+    <div id="battle-board">
+      <app-board />
+    </div>
+    <div>
+      <app-answer />
+    </div>
+  </div>
+  <div class="panel">
+    <app-history />
+  </div>
 </div>

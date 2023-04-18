@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FieldEnum } from './field.enum';
+import { BehaviorSubject } from 'rxjs';
+import { BattleHelper } from './battle-helper';
 
 @Injectable({
   providedIn: 'root',
@@ -7,10 +9,42 @@ import { FieldEnum } from './field.enum';
 export class BattleService {
   constructor() {}
 
-  public boardData: FieldEnum[][] = [];
+  boardData: FieldEnum[][] = [];
+  public boardSubject = new BehaviorSubject<FieldEnum[][]>([]);
+
+  history: string[] = [];
+  public historySubject = new BehaviorSubject<string[]>([]);
 
   public NewGame() {
     this.randomizeBoard();
+    this.history = [];
+    this.historySubject.next([]);
+  }
+
+  public ShotFired(x: number, y: number) {
+    let position = this.boardData[x][y];
+    console.log(position);
+
+    if (position === FieldEnum.Water) {
+      this.setPosition(x, y, FieldEnum.Miss);
+      this.pushHistory(
+        `${BattleHelper.GetDescriptionFromCoord(x, y)} - Miss :(`
+      );
+    } else if (position === FieldEnum.Ship) {
+      this.setPosition(x, y, FieldEnum.Hit);
+      this.pushHistory(`${BattleHelper.GetDescriptionFromCoord(x, y)} - Hit!`);
+    }
+  }
+
+  public ShotFiredByText(inputValue: string) {
+    const x = BattleHelper.GetIndexFromLetter(inputValue);
+    const y = BattleHelper.GetIndexFromNumbers(inputValue);
+    this.ShotFired(x, y);
+  }
+
+  setPosition(x: number, y: number, field: FieldEnum) {
+    this.boardData[x][y] = field;
+    this.boardSubject.next(this.boardData);
   }
 
   private randomizeBoard() {
@@ -66,9 +100,15 @@ export class BattleService {
         this.boardData[i][startCol] = FieldEnum.Ship;
       }
     }
+
+    this.boardSubject.next(this.boardData);
   }
 
-  private isStartpointValid(row: number, col: number, direction: string): boolean {
+  private isStartpointValid(
+    row: number,
+    col: number,
+    direction: string
+  ): boolean {
     let isValid = true;
 
     if (direction === 'horizontal') {
@@ -88,5 +128,10 @@ export class BattleService {
     }
 
     return isValid;
+  }
+
+  pushHistory(hist: string) {
+    this.history.push(hist);
+    this.historySubject.next(this.history);
   }
 }
