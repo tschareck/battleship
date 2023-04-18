@@ -5,7 +5,7 @@ import { FieldEnum } from 'src/app/services/field.enum';
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
-  styleUrls: ['./board.component.sass']
+  styleUrls: ['./board.component.scss']
 })
 export class BoardComponent implements OnInit{
   BoardData: FieldEnum[][] | undefined;
