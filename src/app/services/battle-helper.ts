@@ -25,7 +25,7 @@ export class BattleHelper {
   public static GetIndexFromNumbers(inputValue: string): number {
     if (inputValue.length > 1) {
       const numericPart = inputValue.substring(1);
-      const number = parseInt(numericPart);
+      const number = parseInt(numericPart) - 1;
       return number;
     } else {
       throw new Error('Argument too short');
