@@ -12,10 +12,9 @@ export class AnswerComponent {
   constructor(private service: BattleService) {}
 
   public CheckShot() {
-    console.log('Check shot');
-
     if (this.inputValue) {
       this.service.ShotFiredByText(this.inputValue.toUpperCase());
     }
+    this.inputValue = '';
   }
 }
