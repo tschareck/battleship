@@ -8,6 +8,7 @@ import { AnswerComponent } from './components/answer/answer.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ShipPositionDirective } from './directives/ship-position.directive';
 import { HistoryComponent } from './components/history/history.component';
+import { NgxGoogleAnalyticsModule } from 'ngx-google-analytics';
 
 @NgModule({
   declarations: [
@@ -15,12 +16,15 @@ import { HistoryComponent } from './components/history/history.component';
     BoardComponent,
     AnswerComponent,
     ShipPositionDirective,
-    HistoryComponent
+    HistoryComponent,
   ],
   imports: [
-    BrowserModule, FormsModule, ReactiveFormsModule
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgxGoogleAnalyticsModule.forRoot('G-BX2FGT6B21'),
   ],
   providers: [BattleService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
