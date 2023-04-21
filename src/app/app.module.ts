@@ -9,6 +9,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ShipPositionDirective } from './directives/ship-position.directive';
 import { HistoryComponent } from './components/history/history.component';
 import { NgxGoogleAnalyticsModule } from 'ngx-google-analytics';
+import { FooterComponent } from './components/footer/footer.component';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,8 @@ import { NgxGoogleAnalyticsModule } from 'ngx-google-analytics';
     AnswerComponent,
     ShipPositionDirective,
     HistoryComponent,
+    FooterComponent,
+    HeaderComponent,
   ],
   imports: [
     BrowserModule,
