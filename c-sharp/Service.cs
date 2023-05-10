@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class BattleService
 {
@@ -73,9 +74,16 @@ public class BattleService
 
     public void ShotFiredByText(string inputValue)
     {
-        int x = BattleHelper.GetIndexFromLetter(inputValue);
-        int y = BattleHelper.GetIndexFromNumbers(inputValue);
-        ShotFired(x, y);
+        if (IsValidInput(inputValue))
+        {
+            int x = BattleHelper.GetIndexFromLetter(inputValue);
+            int y = BattleHelper.GetIndexFromNumbers(inputValue);
+            ShotFired(x, y);
+        }
+        else
+        {
+            System.Console.WriteLine("Invalid input");
+        }
     }
 
     void setPosition(int x, int y, FieldEnum field)
@@ -207,5 +215,12 @@ public class BattleService
     void pushHistory(string hist)
     {
         history.Add(hist);
+        System.Console.WriteLine(hist);
+    }
+
+    bool IsValidInput(string input)
+    {
+        var regex = new Regex(@"^[A-J](10|[1-9])$");
+        return regex.IsMatch(input);
     }
 }
