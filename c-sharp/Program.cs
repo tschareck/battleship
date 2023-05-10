@@ -3,7 +3,9 @@ class Program
 {
   static void Main ()
   {
-    Help.DisplayHelp ();
+    Help.DisplaySplash();
+    Help.DisplayHelp();
+
     string input = "";
     while (input != "exit")
     {
