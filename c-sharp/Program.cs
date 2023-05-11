@@ -29,13 +29,14 @@ class Program
 
     static void Shoot(string input, BattleService gameService)
     {
-      if(gameService == null){
+      if (gameService == null)
+      {
         System.Console.WriteLine("Type \"new\" to start new game.");
         return;
       }
       else
       {
-        gameService.ShotFiredByText(input);
+        gameService.ShotFiredByText(input.ToUpper());
       }
     }
 
