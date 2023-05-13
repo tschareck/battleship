@@ -1,0 +1,15 @@
+C:\roboczy\Code\battleship\c-sharp\bin\Debug\net7.0\c-sharp.exe
+C:\roboczy\Code\battleship\c-sharp\bin\Debug\net7.0\c-sharp.deps.json
+C:\roboczy\Code\battleship\c-sharp\bin\Debug\net7.0\c-sharp.runtimeconfig.json
+C:\roboczy\Code\battleship\c-sharp\bin\Debug\net7.0\c-sharp.dll
+C:\roboczy\Code\battleship\c-sharp\bin\Debug\net7.0\c-sharp.pdb
+C:\roboczy\Code\battleship\c-sharp\obj\Debug\net7.0\c-sharp.csproj.AssemblyReference.cache
+C:\roboczy\Code\battleship\c-sharp\obj\Debug\net7.0\c-sharp.GeneratedMSBuildEditorConfig.editorconfig
+C:\roboczy\Code\battleship\c-sharp\obj\Debug\net7.0\c-sharp.AssemblyInfoInputs.cache
+C:\roboczy\Code\battleship\c-sharp\obj\Debug\net7.0\c-sharp.AssemblyInfo.cs
+C:\roboczy\Code\battleship\c-sharp\obj\Debug\net7.0\c-sharp.csproj.CoreCompileInputs.cache
+C:\roboczy\Code\battleship\c-sharp\obj\Debug\net7.0\c-sharp.dll
+C:\roboczy\Code\battleship\c-sharp\obj\Debug\net7.0\refint\c-sharp.dll
+C:\roboczy\Code\battleship\c-sharp\obj\Debug\net7.0\c-sharp.pdb
+C:\roboczy\Code\battleship\c-sharp\obj\Debug\net7.0\c-sharp.genruntimeconfig.cache
+C:\roboczy\Code\battleship\c-sharp\obj\Debug\net7.0\ref\c-sharp.dll
