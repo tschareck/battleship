@@ -45,7 +45,7 @@ export class BattleService {
             this.ships[i][j].isHit = true;
           }
         }
-      }    
+      }
 
       // check if sunk
       for (let targetRow = 0; targetRow < this.ships.length; targetRow++) {
@@ -57,15 +57,15 @@ export class BattleService {
           }
         }
 
-        if (allHit){
+        if (allHit) {
           this.pushHistory("You've sunk my battleship !!!");
-          this.ships.splice(targetRow, 1)
+          this.ships.splice(targetRow, 1);
           break;
         }
       }
 
-      if(this.ships.length == 0){
-        this.pushHistory("GAME OVER. You finished all my ships.");
+      if (this.ships.length == 0) {
+        this.pushHistory('GAME OVER. You finished all my ships.');
       }
     }
   }
@@ -87,85 +87,63 @@ export class BattleService {
       .fill(null)
       .map(() => new Array(10).fill(FieldEnum.Water));
 
-    // put battleship on random spot
-    let startRow = Math.floor(Math.random() * 6);
-    let startCol = Math.floor(Math.random() * 6);
-    let direction = Math.random() < 0.5 ? 'horizontal' : 'vertical';
-    let battleship : ship = [];
-    if (direction === 'horizontal') {
-      for (let i = 0; i < 5; i++) {
-        this.boardData[startRow][startCol + i] = FieldEnum.Ship;
-        battleship.push(new deck(startRow, startCol + i));
-      }
-    } else {
-      for (let i = 0; i < 5; i++) {
-        this.boardData[startRow + i][startCol] = FieldEnum.Ship;
-        battleship.push(new deck(startRow + i, startCol));
-      }
-    }
-    this.ships.push(battleship);
+    this.putShipOnBoard(4);
+    this.putShipOnBoard(3);
+    this.putShipOnBoard(3);
+    this.putShipOnBoard(2);
+    this.putShipOnBoard(2);
+    this.putShipOnBoard(2);
+    this.putShipOnBoard(1);
+    this.putShipOnBoard(1);
+    this.putShipOnBoard(1);
+    this.putShipOnBoard(1);
 
-    // put destroyer on random spot
+    this.boardSubject.next(this.boardData);
+  }
+
+  putShipOnBoard(masts: number) {
+    // put ship on random spot
+    let startRow: number;
+    let startCol: number;
+    let isHorizontal: boolean;
     do {
-      startRow = Math.floor(Math.random() * 7);
-      startCol = Math.floor(Math.random() * 7);
-      direction = Math.random() < 0.5 ? 'horizontal' : 'vertical';
-    } while (!this.isStartpointValid(startRow, startCol, direction));
+      startRow = Math.floor(Math.random() * (11 - masts));
+      startCol = Math.floor(Math.random() * (11 - masts));
+      isHorizontal = Math.random() < 0.5;
+    } while (!this.isStartpointValid(startRow, startCol, isHorizontal, masts));
 
-    let destroyer1 : ship = [];
-    if (direction === 'horizontal') {
-      for (let i = startCol; i < startCol + 4; i++) {
+    let destroyer1: ship = [];
+    if (isHorizontal) {
+      for (let i = startCol; i < startCol + masts; i++) {
         this.boardData[startRow][i] = FieldEnum.Ship;
         destroyer1.push(new deck(startRow, i));
       }
     } else {
-      for (let i = startRow; i < startRow + 4; i++) {
+      for (let i = startRow; i < startRow + masts; i++) {
         this.boardData[i][startCol] = FieldEnum.Ship;
         destroyer1.push(new deck(i, startCol));
       }
     }
     this.ships.push(destroyer1);
-
-    // put another one
-    do {
-      startRow = Math.floor(Math.random() * 7);
-      startCol = Math.floor(Math.random() * 7);
-      direction = Math.random() < 0.5 ? 'horizontal' : 'vertical';
-    } while (!this.isStartpointValid(startRow, startCol, direction));
-    
-    let destroyer2 : ship = [];
-    if (direction === 'horizontal') {
-      for (let i = startCol; i < startCol + 4; i++) {
-        this.boardData[startRow][i] = FieldEnum.Ship;
-        destroyer2.push(new deck(startRow, i));
-      }
-    } else {
-      for (let i = startRow; i < startRow + 4; i++) {
-        this.boardData[i][startCol] = FieldEnum.Ship;
-        destroyer2.push(new deck(i, startCol));
-      }
-    }
-    this.ships.push(destroyer2);
-
-    this.boardSubject.next(this.boardData);
   }
 
   isStartpointValid(
     row: number,
     col: number,
-    direction: string
+    isHorizontal: boolean,
+    masts: number
   ): boolean {
     let isValid = true;
 
-    if (direction === 'horizontal') {
-      for (let i = col; i < col + 4; i++) {
+    if (isHorizontal) {
+      for (let i = col; i < col + masts; i++) {
         if (this.boardData[row][i] === FieldEnum.Ship) {
           isValid = false;
           break;
         }
       }
     } else {
-      for (let i = row; i < row + 4; i++) {
+      for (let i = row; i < row + masts; i++) {
         if (this.boardData[i][col] === FieldEnum.Ship) {
           isValid = false;
           break;
@@ -181,5 +159,3 @@ export class BattleService {
     this.historySubject.next(this.history);
   }
 }
-
-
