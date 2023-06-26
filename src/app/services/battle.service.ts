@@ -1,15 +1,22 @@
 import { Injectable } from '@angular/core';
-import { FieldEnum } from './field.enum';
+import { FieldEnum } from '../types/field.enum';
 import { BehaviorSubject, concatWith } from 'rxjs';
 import { BattleHelper } from './battle-helper';
 import { ship, deck } from '../types/ship';
 import { PlacementService } from './placement.service';
+import { ShipSinkService } from './ship-sink.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BattleService {
-  constructor(private placementService: PlacementService) {}
+  private placementService: PlacementService;
+  private shipSinkService: ShipSinkService;
+
+  constructor() {
+    this.placementService = new PlacementService(20);
+    this.shipSinkService = new ShipSinkService([]);
+  }
 
   boardData: FieldEnum[][] = [];
   public boardSubject = new BehaviorSubject<FieldEnum[][]>([]);
@@ -22,59 +29,30 @@ export class BattleService {
   public NewGame() {
     this.history = [];
     this.historySubject.next([]);
-    this.ships = [];
 
+    this.ships = [];
     this.randomizeBoard();
   }
 
   public ShotFired(x: number, y: number) {
-    let position = this.boardData[x][y];
+    const position = this.boardData[x][y];
 
     if (position === FieldEnum.Water) {
       this.setPosition(x, y, FieldEnum.Miss);
-      this.pushHistory(
+      this.shipSinkService.pushHistory(
         `${BattleHelper.GetDescriptionFromCoord(x, y)} - Miss :(`
       );
     } else if (position === FieldEnum.Ship) {
       this.setPosition(x, y, FieldEnum.Hit);
-      this.pushHistory(`${BattleHelper.GetDescriptionFromCoord(x, y)} - Hit!`);
+      this.shipSinkService.pushHistory(
+        `${BattleHelper.GetDescriptionFromCoord(x, y)} - Hit!`
+      );
 
-      // mark hits in ships array
-      for (let i = 0; i < this.ships.length; i++) {
-        for (let j = 0; j < this.ships[i].length; j++) {
-          if (this.ships[i][j].x === x && this.ships[i][j].y === y) {
-            this.ships[i][j].isHit = true;
-          }
-        }
-      }
-
-      // check if sunk
-      for (let targetRow = 0; targetRow < this.ships.length; targetRow++) {
-        let allHit = true;
-        for (let i = 0; i < this.ships[targetRow].length; i++) {
-          if (this.ships[targetRow][i].isHit === false) {
-            allHit = false;
-            break;
-          }
-        }
-
-        if (allHit) {
-          this.pushHistory("You've sunk my battleship !!!");
-          this.ships.splice(targetRow, 1);
-          break;
-        }
-      }
-
-      if (this.ships.length == 0) {
-        this.pushHistory('GAME OVER. You finished all my ships.');
-      }
+      this.shipSinkService.MarkHit(x, y);
     }
-  }
 
-  public ShotFiredByText(inputValue: string) {
-    const x = BattleHelper.GetIndexFromLetter(inputValue);
-    const y = BattleHelper.GetIndexFromNumbers(inputValue);
-    this.ShotFired(x, y);
+    this.history = this.shipSinkService.history;
+    this.historySubject.next(this.history);
   }
 
   setPosition(x: number, y: number, field: FieldEnum) {
@@ -85,16 +63,13 @@ export class BattleService {
   randomizeBoard() {
     this.boardData = this.placementService.newBoard();
 
-    this.placementService.placeShips(this.boardData, this.ships, 4, 1);
-    this.placementService.placeShips(this.boardData, this.ships, 3, 2);
-    this.placementService.placeShips(this.boardData, this.ships, 2, 3);
-    this.placementService.placeShips(this.boardData, this.ships, 1, 4);
+    this.placementService.placeShips(this.boardData, this.ships, 5, 3);
+    this.placementService.placeShips(this.boardData, this.ships, 4, 4);
+    this.placementService.placeShips(this.boardData, this.ships, 3, 8);
+    this.placementService.placeShips(this.boardData, this.ships, 2, 6);
+    //this.placementService.placeShips(this.boardData, this.ships, 1, 8);
 
+    this.shipSinkService = new ShipSinkService(this.ships);
     this.boardSubject.next(this.boardData);
-  }
-
-  pushHistory(hist: string) {
-    this.history.push(hist);
-    this.historySubject.next(this.history);
   }
 }

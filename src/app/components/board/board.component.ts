@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BattleService } from 'src/app/services/battle.service';
-import { FieldEnum } from 'src/app/services/field.enum';
+import { FieldEnum } from 'src/app/types/field.enum';
 
 @Component({
   selector: 'app-board',

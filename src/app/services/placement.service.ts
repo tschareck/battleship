@@ -1,20 +1,21 @@
-import { Injectable } from '@angular/core';
-import { FieldEnum } from './field.enum';
+import { FieldEnum } from '../types/field.enum';
 import { deck, ship } from '../types/ship';
-
-@Injectable({
-  providedIn: 'root',
-})
 
 /**
  * Handle randomly placing ships on board
  */
 export class PlacementService {
-  /**  new 10x10 board filled with water */
+  private size: number;
+
+  constructor(size: number) {
+    this.size = size;
+  }
+
+  /**  new {size}x{size} board filled with water */
   public newBoard() {
-    return new Array(10)
+    return new Array(this.size)
       .fill(null)
-      .map(() => new Array(10).fill(FieldEnum.Water));
+      .map(() => new Array(this.size).fill(FieldEnum.Water));
   }
 
   public placeShips(
@@ -24,8 +25,8 @@ export class PlacementService {
     shipCount: number
   ) {
     while (shipCount > 0) {
-      let x = Math.floor(Math.random() * (10 - shipSize + 1));
-      let y = Math.floor(Math.random() * (10 - shipSize + 1));
+      let x = Math.floor(Math.random() * (this.size - shipSize + 1));
+      let y = Math.floor(Math.random() * (this.size - shipSize + 1));
       let isVertical = Math.random() < 0.5;
       if (this.canPlaceShip(grid, x, y, shipSize, isVertical)) {
         let ship: ship = [];
@@ -55,7 +56,7 @@ export class PlacementService {
       for (let j = -1; j <= 1; j++) {
         let row = isVertical ? x + i : x + j;
         let col = isVertical ? y + j : y + i;
-        if (row >= 0 && row < 10 && col >= 0 && col < 10) {
+        if (row >= 0 && row < this.size && col >= 0 && col < this.size) {
           if (grid[row][col] == FieldEnum.Ship) {
             return false;
           }

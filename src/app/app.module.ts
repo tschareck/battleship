@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { BoardComponent } from './components/board/board.component';
 import { BattleService } from './services/battle.service';
-import { AnswerComponent } from './components/answer/answer.component';
 import { ShipPositionDirective } from './directives/ship-position.directive';
 import { HistoryComponent } from './components/history/history.component';
 import { NgxGoogleAnalyticsModule } from 'ngx-google-analytics';
@@ -16,7 +15,6 @@ import { HeaderComponent } from './components/header/header.component';
   declarations: [
     AppComponent,
     BoardComponent,
-    AnswerComponent,
     ShipPositionDirective,
     HistoryComponent,
     FooterComponent,
