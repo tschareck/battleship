@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { FieldEnum } from './field.enum';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, concatWith } from 'rxjs';
 import { BattleHelper } from './battle-helper';
 import { ship, deck } from '../types/ship';
+import { PlacementService } from './placement.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BattleService {
-  constructor() {}
+  constructor(private placementService: PlacementService) {}
 
   boardData: FieldEnum[][] = [];
   public boardSubject = new BehaviorSubject<FieldEnum[][]>([]);
@@ -82,76 +83,14 @@ export class BattleService {
   }
 
   randomizeBoard() {
-    // new 10x10 board filled with water
-    this.boardData = new Array(10)
-      .fill(null)
-      .map(() => new Array(10).fill(FieldEnum.Water));
+    this.boardData = this.placementService.newBoard();
 
-    this.putShipOnBoard(4);
-    this.putShipOnBoard(3);
-    this.putShipOnBoard(3);
-    this.putShipOnBoard(2);
-    this.putShipOnBoard(2);
-    this.putShipOnBoard(2);
-    this.putShipOnBoard(1);
-    this.putShipOnBoard(1);
-    this.putShipOnBoard(1);
-    this.putShipOnBoard(1);
+    this.placementService.placeShips(this.boardData, this.ships, 4, 1);
+    this.placementService.placeShips(this.boardData, this.ships, 3, 2);
+    this.placementService.placeShips(this.boardData, this.ships, 2, 3);
+    this.placementService.placeShips(this.boardData, this.ships, 1, 4);
 
     this.boardSubject.next(this.boardData);
-  }
-
-  putShipOnBoard(masts: number) {
-    // put ship on random spot
-    let startRow: number;
-    let startCol: number;
-    let isHorizontal: boolean;
-    do {
-      startRow = Math.floor(Math.random() * (11 - masts));
-      startCol = Math.floor(Math.random() * (11 - masts));
-      isHorizontal = Math.random() < 0.5;
-    } while (!this.isStartpointValid(startRow, startCol, isHorizontal, masts));
-
-    let destroyer1: ship = [];
-    if (isHorizontal) {
-      for (let i = startCol; i < startCol + masts; i++) {
-        this.boardData[startRow][i] = FieldEnum.Ship;
-        destroyer1.push(new deck(startRow, i));
-      }
-    } else {
-      for (let i = startRow; i < startRow + masts; i++) {
-        this.boardData[i][startCol] = FieldEnum.Ship;
-        destroyer1.push(new deck(i, startCol));
-      }
-    }
-    this.ships.push(destroyer1);
-  }
-
-  isStartpointValid(
-    row: number,
-    col: number,
-    isHorizontal: boolean,
-    masts: number
-  ): boolean {
-    let isValid = true;
-
-    if (isHorizontal) {
-      for (let i = col; i < col + masts; i++) {
-        if (this.boardData[row][i] === FieldEnum.Ship) {
-          isValid = false;
-          break;
-        }
-      }
-    } else {
-      for (let i = row; i < row + masts; i++) {
-        if (this.boardData[i][col] === FieldEnum.Ship) {
-          isValid = false;
-          break;
-        }
-      }
-    }
-
-    return isValid;
   }
 
   pushHistory(hist: string) {
