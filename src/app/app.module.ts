@@ -8,6 +8,9 @@ import { BattleService } from './services/battle.service';
 import { AnswerComponent } from './components/answer/answer.component';
 import { ShipPositionDirective } from './directives/ship-position.directive';
 import { HistoryComponent } from './components/history/history.component';
+import { NgxGoogleAnalyticsModule } from 'ngx-google-analytics';
+import { FooterComponent } from './components/footer/footer.component';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
   declarations: [
@@ -16,8 +19,15 @@ import { HistoryComponent } from './components/history/history.component';
     AnswerComponent,
     ShipPositionDirective,
     HistoryComponent,
+    FooterComponent,
+    HeaderComponent,
   ],
-  imports: [BrowserModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgxGoogleAnalyticsModule.forRoot('G-BX2FGT6B21'),
+  ],
   providers: [BattleService],
   bootstrap: [AppComponent],
 })
