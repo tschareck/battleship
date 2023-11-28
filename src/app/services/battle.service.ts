@@ -5,6 +5,7 @@ import { BattleHelper } from './battle-helper';
 import { ship, deck } from '../types/ship';
 import { PlacementService } from './placement.service';
 import { ShipSinkService } from './ship-sink.service';
+import { SunkenShips } from '../types/sunken-ships';
 
 @Injectable({
   providedIn: 'root',
@@ -26,12 +27,16 @@ export class BattleService {
 
   ships: ship[] = [];
 
+  sunkenShipsSubject = new BehaviorSubject<SunkenShips>([]);
+
   public NewGame() {
     this.history = [];
     this.historySubject.next([]);
 
     this.ships = [];
     this.randomizeBoard();
+
+    this.sunkenShipsSubject.next(BattleHelper.GetSunkenFromShips(this.ships));
   }
 
   public ShotFired(x: number, y: number) {
@@ -53,6 +58,10 @@ export class BattleService {
 
     this.history = this.shipSinkService.history;
     this.historySubject.next(this.history);
+
+    this.sunkenShipsSubject.next(BattleHelper.GetSunkenFromShips(this.ships));
+
+    console.log(this.ships);
   }
 
   setPosition(x: number, y: number, field: FieldEnum) {

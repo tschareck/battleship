@@ -1,0 +1,5 @@
+<div *ngFor="let item of ships" style="display: flex;">
+  <div class="ship-icon__rectangle" [ngClass]="{'ship-icon--sunk': item.isSunk}">
+    <div class="ship-icon__square" *ngFor="let i of [].constructor(item.mast)"></div>
+  </div>
+</div>

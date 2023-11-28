@@ -10,6 +10,7 @@ import { HistoryComponent } from './components/history/history.component';
 import { NgxGoogleAnalyticsModule } from 'ngx-google-analytics';
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
+import { ShipsComponent } from './components/ships/ships.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { HeaderComponent } from './components/header/header.component';
     HistoryComponent,
     FooterComponent,
     HeaderComponent,
+    ShipsComponent,
   ],
   imports: [
     BrowserModule,
