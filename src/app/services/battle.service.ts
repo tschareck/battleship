@@ -1,15 +1,26 @@
 import { Injectable } from '@angular/core';
-import { FieldEnum } from './field.enum';
-import { BehaviorSubject, concatWith } from 'rxjs';
+import { FieldEnum } from '../types/field.enum';
+import { BehaviorSubject } from 'rxjs';
 import { BattleHelper } from './battle-helper';
 import { ship, deck } from '../types/ship';
 import { PlacementService } from './placement.service';
+import { ShipSinkService } from './ship-sink.service';
+import { SunkenShips } from '../types/sunken-ships';
+import { DifficultyEnum } from '../types/difficulty.enum';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BattleService {
-  constructor(private placementService: PlacementService) {}
+  private placementService: PlacementService;
+  private shipSinkService: ShipSinkService;
+  public difficulty: DifficultyEnum;
+
+  constructor() {
+    this.placementService = new PlacementService();
+    this.shipSinkService = new ShipSinkService([]);
+    this.difficulty = DifficultyEnum.Classic;
+  }
 
   boardData: FieldEnum[][] = [];
   public boardSubject = new BehaviorSubject<FieldEnum[][]>([]);
@@ -19,62 +30,42 @@ export class BattleService {
 
   ships: ship[] = [];
 
+  sunkenShipsSubject = new BehaviorSubject<SunkenShips>([]);
+
   public NewGame() {
+    console.log(this.difficulty);
+
     this.history = [];
     this.historySubject.next([]);
-    this.ships = [];
 
+    this.ships = [];
     this.randomizeBoard();
+
+    this.sunkenShipsSubject.next(BattleHelper.GetSunkenFromShips(this.ships));
   }
 
   public ShotFired(x: number, y: number) {
-    let position = this.boardData[x][y];
+    const position = this.boardData[x][y];
+    this.shipSinkService.shotCounter++;
 
     if (position === FieldEnum.Water) {
       this.setPosition(x, y, FieldEnum.Miss);
-      this.pushHistory(
+      this.shipSinkService.pushHistory(
         `${BattleHelper.GetDescriptionFromCoord(x, y)} - Miss :(`
       );
     } else if (position === FieldEnum.Ship) {
       this.setPosition(x, y, FieldEnum.Hit);
-      this.pushHistory(`${BattleHelper.GetDescriptionFromCoord(x, y)} - Hit!`);
+      this.shipSinkService.pushHistory(
+        `${BattleHelper.GetDescriptionFromCoord(x, y)} - Hit!`
+      );
 
-      // mark hits in ships array
-      for (let i = 0; i < this.ships.length; i++) {
-        for (let j = 0; j < this.ships[i].length; j++) {
-          if (this.ships[i][j].x === x && this.ships[i][j].y === y) {
-            this.ships[i][j].isHit = true;
-          }
-        }
-      }
-
-      // check if sunk
-      for (let targetRow = 0; targetRow < this.ships.length; targetRow++) {
-        let allHit = true;
-        for (let i = 0; i < this.ships[targetRow].length; i++) {
-          if (this.ships[targetRow][i].isHit === false) {
-            allHit = false;
-            break;
-          }
-        }
-
-        if (allHit) {
-          this.pushHistory("You've sunk my battleship !!!");
-          this.ships.splice(targetRow, 1);
-          break;
-        }
-      }
-
-      if (this.ships.length == 0) {
-        this.pushHistory('GAME OVER. You finished all my ships.');
-      }
+      this.shipSinkService.MarkHit(x, y);
     }
-  }
 
-  public ShotFiredByText(inputValue: string) {
-    const x = BattleHelper.GetIndexFromLetter(inputValue);
-    const y = BattleHelper.GetIndexFromNumbers(inputValue);
-    this.ShotFired(x, y);
+    this.history = this.shipSinkService.history;
+    this.historySubject.next(this.history);
+
+    this.sunkenShipsSubject.next(BattleHelper.GetSunkenFromShips(this.ships));
   }
 
   setPosition(x: number, y: number, field: FieldEnum) {
@@ -83,18 +74,41 @@ export class BattleService {
   }
 
   randomizeBoard() {
-    this.boardData = this.placementService.newBoard();
+    switch (this.difficulty) {
+      case DifficultyEnum.ChildsPlay:
+        this.boardData = this.placementService.newBoard(10);
+        this.placementService.placeShips(this.boardData, this.ships, 5, 1);
+        this.placementService.placeShips(this.boardData, this.ships, 4, 2);
+        break;
+      case DifficultyEnum.Easier:
+        break;
+      case DifficultyEnum.Classic:
+        this.boardData = this.placementService.newBoard(10);
+        this.placementService.placeShips(this.boardData, this.ships, 4, 1);
+        this.placementService.placeShips(this.boardData, this.ships, 3, 2);
+        this.placementService.placeShips(this.boardData, this.ships, 2, 3);
+        this.placementService.placeShips(this.boardData, this.ships, 1, 4);
+        break;
+      case DifficultyEnum.Harder:
+        this.boardData = this.placementService.newBoard(18);
+        this.placementService.placeShips(this.boardData, this.ships, 5, 3);
+        this.placementService.placeShips(this.boardData, this.ships, 4, 4);
+        this.placementService.placeShips(this.boardData, this.ships, 3, 8);
+        this.placementService.placeShips(this.boardData, this.ships, 2, 6);
+        break;
+      case DifficultyEnum.Brutal:
+        this.boardData = this.placementService.newBoard(20);
+        this.placementService.placeShips(this.boardData, this.ships, 5, 2);
+        this.placementService.placeShips(this.boardData, this.ships, 4, 4);
+        this.placementService.placeShips(this.boardData, this.ships, 3, 8);
+        this.placementService.placeShips(this.boardData, this.ships, 2, 6);
+        this.placementService.placeShips(this.boardData, this.ships, 1, 8);
+        break;
+      default:
+        break;
+    }
 
-    this.placementService.placeShips(this.boardData, this.ships, 4, 1);
-    this.placementService.placeShips(this.boardData, this.ships, 3, 2);
-    this.placementService.placeShips(this.boardData, this.ships, 2, 3);
-    this.placementService.placeShips(this.boardData, this.ships, 1, 4);
-
+    this.shipSinkService = new ShipSinkService(this.ships);
     this.boardSubject.next(this.boardData);
-  }
-
-  pushHistory(hist: string) {
-    this.history.push(hist);
-    this.historySubject.next(this.history);
   }
 }
