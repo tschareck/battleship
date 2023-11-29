@@ -3,10 +3,12 @@ import { ship } from '../types/ship';
 export class ShipSinkService {
   ships: ship[];
   history: string[];
+  shotCounter: number;
 
   constructor(ships: ship[]) {
     this.ships = ships;
     this.history = [];
+    this.shotCounter = 0;
   }
 
   MarkHit(x: number, y: number) {
@@ -38,6 +40,7 @@ export class ShipSinkService {
 
     if (this.ships.length == 0) {
       this.history.push('GAME OVER. You finished all my ships.');
+      this.history.push(`You fired ${this.shotCounter} shots.`);
     }
   }
 

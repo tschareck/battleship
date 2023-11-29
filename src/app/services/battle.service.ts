@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { FieldEnum } from '../types/field.enum';
-import { BehaviorSubject, concatWith } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { BattleHelper } from './battle-helper';
 import { ship, deck } from '../types/ship';
 import { PlacementService } from './placement.service';
 import { ShipSinkService } from './ship-sink.service';
 import { SunkenShips } from '../types/sunken-ships';
+import { DifficultyEnum } from '../types/difficulty.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -13,10 +14,12 @@ import { SunkenShips } from '../types/sunken-ships';
 export class BattleService {
   private placementService: PlacementService;
   private shipSinkService: ShipSinkService;
+  public difficulty: DifficultyEnum;
 
   constructor() {
-    this.placementService = new PlacementService(20);
+    this.placementService = new PlacementService();
     this.shipSinkService = new ShipSinkService([]);
+    this.difficulty = DifficultyEnum.Classic;
   }
 
   boardData: FieldEnum[][] = [];
@@ -30,6 +33,8 @@ export class BattleService {
   sunkenShipsSubject = new BehaviorSubject<SunkenShips>([]);
 
   public NewGame() {
+    console.log(this.difficulty);
+
     this.history = [];
     this.historySubject.next([]);
 
@@ -41,6 +46,7 @@ export class BattleService {
 
   public ShotFired(x: number, y: number) {
     const position = this.boardData[x][y];
+    this.shipSinkService.shotCounter++;
 
     if (position === FieldEnum.Water) {
       this.setPosition(x, y, FieldEnum.Miss);
@@ -60,8 +66,6 @@ export class BattleService {
     this.historySubject.next(this.history);
 
     this.sunkenShipsSubject.next(BattleHelper.GetSunkenFromShips(this.ships));
-
-    console.log(this.ships);
   }
 
   setPosition(x: number, y: number, field: FieldEnum) {
@@ -70,13 +74,39 @@ export class BattleService {
   }
 
   randomizeBoard() {
-    this.boardData = this.placementService.newBoard();
-
-    this.placementService.placeShips(this.boardData, this.ships, 5, 3);
-    this.placementService.placeShips(this.boardData, this.ships, 4, 4);
-    this.placementService.placeShips(this.boardData, this.ships, 3, 8);
-    this.placementService.placeShips(this.boardData, this.ships, 2, 6);
-    //this.placementService.placeShips(this.boardData, this.ships, 1, 8);
+    switch (this.difficulty) {
+      case DifficultyEnum.ChildsPlay:
+        this.boardData = this.placementService.newBoard(10);
+        this.placementService.placeShips(this.boardData, this.ships, 5, 1);
+        this.placementService.placeShips(this.boardData, this.ships, 4, 2);
+        break;
+      case DifficultyEnum.Easier:
+        break;
+      case DifficultyEnum.Classic:
+        this.boardData = this.placementService.newBoard(10);
+        this.placementService.placeShips(this.boardData, this.ships, 4, 1);
+        this.placementService.placeShips(this.boardData, this.ships, 3, 2);
+        this.placementService.placeShips(this.boardData, this.ships, 2, 3);
+        this.placementService.placeShips(this.boardData, this.ships, 1, 4);
+        break;
+      case DifficultyEnum.Harder:
+        this.boardData = this.placementService.newBoard(18);
+        this.placementService.placeShips(this.boardData, this.ships, 5, 3);
+        this.placementService.placeShips(this.boardData, this.ships, 4, 4);
+        this.placementService.placeShips(this.boardData, this.ships, 3, 8);
+        this.placementService.placeShips(this.boardData, this.ships, 2, 6);
+        break;
+      case DifficultyEnum.Brutal:
+        this.boardData = this.placementService.newBoard(20);
+        this.placementService.placeShips(this.boardData, this.ships, 5, 2);
+        this.placementService.placeShips(this.boardData, this.ships, 4, 4);
+        this.placementService.placeShips(this.boardData, this.ships, 3, 8);
+        this.placementService.placeShips(this.boardData, this.ships, 2, 6);
+        this.placementService.placeShips(this.boardData, this.ships, 1, 8);
+        break;
+      default:
+        break;
+    }
 
     this.shipSinkService = new ShipSinkService(this.ships);
     this.boardSubject.next(this.boardData);

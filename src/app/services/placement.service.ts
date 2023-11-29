@@ -5,14 +5,13 @@ import { deck, ship } from '../types/ship';
  * Handle randomly placing ships on board
  */
 export class PlacementService {
-  private size: number;
+  private size: number = 10;
 
-  constructor(size: number) {
-    this.size = size;
-  }
+  constructor() {}
 
   /**  new {size}x{size} board filled with water */
-  public newBoard() {
+  public newBoard(size: number) {
+    this.size = size;
     return new Array(this.size)
       .fill(null)
       .map(() => new Array(this.size).fill(FieldEnum.Water));

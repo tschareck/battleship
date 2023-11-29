@@ -1,4 +1,4 @@
-export enum Difficulty {
+export enum DifficultyEnum {
   ChildsPlay,
   Easier,
   Classic,

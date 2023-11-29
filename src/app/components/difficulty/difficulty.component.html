@@ -1,0 +1,10 @@
+<div class="d-flex">
+    Choose your difficulty:
+</div>
+<div class="d-flex">
+    <button type="button" class="btn {{ difficulty == 0 ? 'btn-success' : 'btn-outline-success' }} m-1" (click)="BtnClick(0)">Child's play</button>
+    <button type="button" class="btn {{ difficulty == 1 ? 'btn-success' : 'btn-outline-success' }} m-1" (click)="BtnClick(1)">Easier</button>
+    <button type="button" class="btn {{ difficulty == 2 ? 'btn-success' : 'btn-outline-success' }} m-1" (click)="BtnClick(2)">Classic</button>
+    <button type="button" class="btn {{ difficulty == 3 ? 'btn-success' : 'btn-outline-success' }} m-1" (click)="BtnClick(3)">Harder</button>
+    <button type="button" class="btn {{ difficulty == 4 ? 'btn-success' : 'btn-outline-success' }} m-1" (click)="BtnClick(4)">Brutal</button>   
+</div>
