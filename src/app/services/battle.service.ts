@@ -81,6 +81,10 @@ export class BattleService {
         this.placementService.placeShips(this.boardData, this.ships, 4, 2);
         break;
       case DifficultyEnum.Easier:
+        this.boardData = this.placementService.newBoard(9);
+        this.placementService.placeShips(this.boardData, this.ships, 4, 1);
+        this.placementService.placeShips(this.boardData, this.ships, 3, 2);
+        this.placementService.placeShips(this.boardData, this.ships, 2, 3);
         break;
       case DifficultyEnum.Classic:
         this.boardData = this.placementService.newBoard(10);

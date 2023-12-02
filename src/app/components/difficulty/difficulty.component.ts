@@ -15,5 +15,6 @@ export class DifficultyComponent {
   BtnClick(arg0: number) {
     this.difficulty = arg0;
     this.service.difficulty = this.difficulty;
+    this.service.NewGame();
   }
 }
